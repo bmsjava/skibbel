@@ -5,7 +5,7 @@ apt-get install -y google-chrome-stable
 chrome_version=$(google-chrome --version|awk '{split($0,a," "); print a[3]}'|awk '{split($0,a,"."); print a[1]}')
 html=$(curl -k --silent 'https://chromedriver.chromium.org/downloads')
 version=$(grep -oPm1 "ChromeDriver "$chrome_version"\.[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+" <<< "$html" | awk '{split($0,a," "); print a[2]}' | head -1)
-wget -N https://chromedriver.storage.googleapis.com/$chrome_version/chromedriver_linux64.zip
+wget -N https://chromedriver.storage.googleapis.com/$version/chromedriver_linux64.zip
 unzip chromedriver_linux64.zip
 chmod +x chromedriver
 mv -f chromedriver /usr/local/share/chromedriver
