@@ -15,9 +15,6 @@ all_proxy = ['socks5://' + i for i in proxy_list]
 r = requests.get('https://raw.githubusercontent.com/ShiftyTR/Proxy-List/master/socks5.txt')
 proxy_list = re.findall(r'\d+\.\d+\.\d+\.\d+:\d+', r.text)
 [all_proxy.append('socks5://' + i) for i in proxy_list]
-r = requests.get('https://raw.githubusercontent.com/ShiftyTR/Proxy-List/master/socks4.txt')
-proxy_list = re.findall(r'\d+\.\d+\.\d+\.\d+:\d+', r.text)
-[all_proxy.append('socks4://' + i) for i in proxy_list]
 color_log(f'Запущен поиск прокси ...', yellow)
 good_proxy = []
 
@@ -35,7 +32,7 @@ def _get_proxy(proxy: str) -> List[str]:
 
 
 def get_good_proxy() -> List[str]:
-    with Pool(300) as p:
+    with Pool(150) as p:
         good_proxy_list = p.map(_get_proxy, all_proxy)
     good_proxy_list = [i1 for i in good_proxy_list for i1 in i if len(i1) != 0]
     color_log(f'Найдено {len(good_proxy_list)} прокси\n', green)
