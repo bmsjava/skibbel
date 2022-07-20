@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
+from mimetypes import common_types
 import os
 directory_script = os.path.abspath('')
 import sys
@@ -158,7 +159,6 @@ def main() -> None:
             main_page = driver.window_handles[0]
             driver.switch_to.window(main_page)
         time.sleep(0.5)
-        input('!!!!!')
         # ----------------------------------------------------------------------------- #
 
 
