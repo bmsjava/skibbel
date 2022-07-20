@@ -127,10 +127,7 @@ def main() -> None:
         time.sleep(0.5)
 
         # Заполняем информацию О СЕБЕ
-        rand_text = random.choice(creative_text)
-        #text = create_creative(rand_text)
-        creative = f'{rand_text}'
-        javaScript = f'document.getElementById("profile_text").value="{creative}"'
+        javaScript = f'document.getElementById("profile_text").value="{random.choice(creative_text)}"'
         driver.execute_script(javaScript)
 
         # Ждем и нажимаем кнопку начать чат
