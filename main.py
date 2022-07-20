@@ -57,12 +57,12 @@ def main() -> None:
                 "webrtc.nonproxied_udp_enabled" : False
             }
         )
-        options.headless = True
+        options.headless = False
 
         rand_proxy = random.choice(get_good_proxy())
         options.add_argument(f'--proxy-server={rand_proxy}')
         driver = webdriver.Chrome(
-            #executable_path = directory_script + '/data/chromedriver',
+            executable_path = directory_script + '/data/chromedriver',
             options = options
         )
 
@@ -76,7 +76,8 @@ def main() -> None:
             '*.bmp*',
             '*.gif*',
             '*.tif*',
-            '*.ico*'
+            '*.ico*',
+            '*adpresenter.de*'
         ]
         driver.execute_cdp_cmd('Network.setBlockedURLs', {'urls': img_format_list})
         driver.execute_cdp_cmd('Network.enable', {})
@@ -162,7 +163,8 @@ def main() -> None:
             '*.bmp*',
             '*.gif*',
             '*.tif*',
-            '*.ico*'
+            '*.ico*',
+            '*adpresenter.de*'
         ]
         driver.execute_cdp_cmd('Network.setBlockedURLs', {'urls': img_format_list})
         driver.execute_cdp_cmd('Network.enable', {})
@@ -204,7 +206,7 @@ def main() -> None:
             if len(driver.find_elements(By.XPATH, '//div[@class="text-message red offline"]')) != 0:
                 if driver.find_element(By.XPATH, '//div[@class="text-message red offline"]').is_displayed():
                     element = driver.find_element(By.XPATH, '//div[@class="text-message red offline"]')
-                    color_log(f'Партнер отключился'. yellow)
+                    color_log(f'Партнер отключился', yellow)
                     driver.execute_script("arguments[0].click();", element)
 
             # Пишем первое сообщение
