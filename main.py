@@ -57,12 +57,12 @@ def main() -> None:
                 "webrtc.nonproxied_udp_enabled" : False
             }
         )
-        options.headless = False
+        options.headless = True
 
         rand_proxy = random.choice(get_good_proxy())
         options.add_argument(f'--proxy-server={rand_proxy}')
         driver = webdriver.Chrome(
-            executable_path = directory_script + '/data/chromedriver',
+            #executable_path = directory_script + '/data/chromedriver',
             options = options
         )
 
