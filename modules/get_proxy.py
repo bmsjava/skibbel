@@ -21,7 +21,7 @@ def _get_proxy(proxy: str) -> List[str]:
         'https':proxy
     }
     try:
-        r = requests.get('https://www.skibbel.com/robots.txt', proxies = proxies, timeout = 3)
+        r = requests.get('https://www.skibbel.com/', proxies = proxies, timeout = 2)
         good_proxy.append(proxy)
     except:
         pass
@@ -32,5 +32,5 @@ def get_good_proxy() -> List[str]:
     with Pool(100) as p:
         good_proxy_list = p.map(_get_proxy, all_proxy)
     good_proxy_list = [i1 for i in good_proxy_list for i1 in i if len(i1) != 0]
-    color_log(f'Найдено {len(good_proxy_list)} прокси\n', green)
+    color_log(f'Найдено {len(good_proxy_list)} прокси', green)
     return good_proxy_list

@@ -15,6 +15,7 @@ from multiprocessing import Pool
 
 from modules.selenium import webdriver
 from modules.selenium.webdriver.common.by import By
+from modules.selenium.webdriver.common.keys import Keys
 
 
 from modules.get_proxy import get_good_proxy
@@ -27,9 +28,12 @@ creative_text = [
     'Contact me ❤️❤️❤️ Site 👉 https://bit.ly/3Pk9bc0 Telegram 👉 https://t.me/my_intim_photos/5'
 ]
 
+global index_i
+index_i = 0
 
 def main() -> None:
     try:
+        global index_i
         options = webdriver.ChromeOptions()
         options.add_argument("--mute-audio")
         options.add_argument('--no-sandbox')
@@ -58,6 +62,7 @@ def main() -> None:
         rand_proxy = random.choice(get_good_proxy())
         options.add_argument(f'--proxy-server={rand_proxy}')
         driver = webdriver.Chrome(
+            #executable_path = directory_script + '/data/chromedriver',
             options = options
         )
 
@@ -131,7 +136,6 @@ def main() -> None:
                 raise Exception('Не дождались появления кнопки НАЧАТЬ ЧАТ')
             if len(driver.find_elements(By.XPATH, '//button[@id="btnStartText" and @disabled="disabled"]')) != 0:
                 if driver.find_element(By.XPATH, '//button[@id="btnStartText" and @disabled="disabled"]').is_displayed():
-                    color_log('Ждём появления кнопки', yellow)
                     time.sleep(1)
                     cicle += 1
             elif len(driver.find_elements(By.XPATH, '//button[@id="btnStartText" and @disabled="disabled"]')) == 0:
@@ -149,11 +153,73 @@ def main() -> None:
             main_page = driver.window_handles[0]
             driver.switch_to.window(main_page)
         time.sleep(0.5)
+        # Список блокируемых форматов изображений
+        img_format_list = [
+            '*.svg*',
+            '*.png*',
+            '*.jpg*',
+            '*.jpeg*',
+            '*.bmp*',
+            '*.gif*',
+            '*.tif*',
+            '*.ico*'
+        ]
+        driver.execute_cdp_cmd('Network.setBlockedURLs', {'urls': img_format_list})
+        driver.execute_cdp_cmd('Network.enable', {})
+        color_log(f'Прошли регистрацию', green)
         # ----------------------------------------------------------------------------- #
 
 
         # --------------------------------- Рассылка ---------------------------------- #
+        for _ in range(random.randint(200, 250)):
+            # Проверяем подключился ли партнер
+            index = 0
+            visible = True
+            while visible == True:
+                if index >= 10:
+                    raise Exception('Меняем IP')
+                if len(driver.find_elements(By.XPATH, '//p[@class="info"]')) != 0:
+                    if driver.find_element(By.XPATH, '//p[@class="info"]').is_displayed():
+                        color_log('Ждём подключения партнёра', yellow)
+                        time.sleep(3)
+                        index += 1
+                    else:
+                        visible = False
+                        time.sleep(1)
+                else:
+                    visible = False
+                    time.sleep(1)
+            time.sleep(random.randint(4, 8))
+            # Проверяем есть ли видео звонок
+            if len(driver.find_elements(By.XPATH, '//*[@id="video_call"]/div/div/a[2]/i')) != 0:
+                if driver.find_element(By.XPATH, '//*[@id="video_call"]/div/div/a[2]/i').is_displayed():
+                    element = driver.find_element(By.XPATH, '//*[@id="video_call"]/div/div/a[2]/i')
+                    driver.execute_script("arguments[0].click();", element)
+            # Проверяем рекламу
+            if len(driver.find_elements(By.XPATH, '//button[@class="swal2-cancel swal2-styled"]')) != 0:
+                if driver.find_element(By.XPATH, '//button[@class="swal2-cancel swal2-styled"]').is_displayed():
+                    element = driver.find_element(By.XPATH, '//button[@class="swal2-cancel swal2-styled"]')
+                    driver.execute_script("arguments[0].click();", element)
+            # Проверяем не ушел ли из чата партнер
+            if len(driver.find_elements(By.XPATH, '//div[@class="text-message red offline"]')) != 0:
+                if driver.find_element(By.XPATH, '//div[@class="text-message red offline"]').is_displayed():
+                    element = driver.find_element(By.XPATH, '//div[@class="text-message red offline"]')
+                    color_log(f'Партнер отключился'. yellow)
+                    driver.execute_script("arguments[0].click();", element)
 
+            # Пишем первое сообщение
+            text = random.choice(['Greetings','Hello','Hi','Howdy','Good day','Hey'])
+            element = driver.find_element(By.XPATH, '//*[@id="ownMessage"]')
+            for i in text:
+                element.send_keys(i)
+                time.sleep(0.1)
+            driver.find_element(By.XPATH, '//*[@id="ownMessage"]').send_keys(Keys.ENTER)
+            time.sleep(random.randint(2, 5))
+
+            element = driver.find_element(By.XPATH, '//i[@class="fa fa-user-times"]')
+            driver.execute_script("arguments[0].click();", element)
+            index_i += 1
+            color_log(f'Отправили сообщений - {str(index_i)}', green)
         # ----------------------------------------------------------------------------- #
 
 
