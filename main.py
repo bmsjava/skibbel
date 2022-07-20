@@ -223,8 +223,9 @@ def main() -> None:
             index_i += 1
             color_log(f'Отправили сообщений - {str(index_i)}', green)
         # ----------------------------------------------------------------------------- #
-
-
+        
+    except Exception as ex:
+        color_log(ex, red)
 
     finally:
         try:
