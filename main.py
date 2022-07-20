@@ -98,8 +98,12 @@ def main() -> None:
 
         # Ставим фото
         rand_photo = directory_script + '/photos/' + random.choice(os.listdir(directory_script + '/photos'))
+        file_oldname = os.path.join(rand_photo)
+        name_photo_list = ['may', 'april', 'oktober', 'december', 'september', 'i']
+        file_newname_newfile = os.path.join(directory_script + '/photos', f'{random.choice(name_photo_list)}{random.randint(100, 5000)}.jpg')
+        os.rename(file_oldname, file_newname_newfile)
         if len(driver.find_elements(By.CSS_SELECTOR, '#galleryPicture')) != 0:
-            driver.find_element(By.CSS_SELECTOR, '#galleryPicture').send_keys(rand_photo)
+            driver.find_element(By.CSS_SELECTOR, '#galleryPicture').send_keys(file_newname_newfile)
         time.sleep(1)
 
         # Выбираем свой пол
