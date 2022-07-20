@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 
-from mimetypes import common_types
 import os
 directory_script = os.path.abspath('')
 import sys
@@ -10,17 +9,12 @@ sys.path.insert(1, directory_script + '/modules')
 
 import random
 import time
-import re
 from typing import List
 from multiprocessing import Pool
 
 
-import modules.requests
 from modules.selenium import webdriver
 from modules.selenium.webdriver.common.by import By
-from modules.selenium.webdriver.common.keys import Keys
-from modules.selenium.webdriver.support.ui import Select
-#import spintax
 
 
 from modules.get_proxy import get_good_proxy
@@ -64,7 +58,6 @@ def main() -> None:
         rand_proxy = random.choice(get_good_proxy())
         options.add_argument(f'--proxy-server={rand_proxy}')
         driver = webdriver.Chrome(
-            #executable_path = directory_script + '/data/chromedriver',
             options = options
         )
 
