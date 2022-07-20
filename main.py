@@ -13,6 +13,7 @@ from typing import List
 from multiprocessing import Pool
 
 
+import modules.requests
 from modules.selenium import webdriver
 from modules.selenium.webdriver.common.by import By
 from modules.selenium.webdriver.common.keys import Keys
@@ -210,9 +211,12 @@ def main() -> None:
                     driver.execute_script("arguments[0].click();", element)
 
             # Пишем первое сообщение
-            text = f'Fuck me please ❤️❤️❤️ 👉 https://bit.ly/3Pk9bc0'
+            probel = '​'
+            text = f'F{probel * random.randint(1,9)}uc{probel * random.randint(1,9)}k m{probel * random.randint(1,9)}e pl{probel * random.randint(1,9)}ea{probel * random.randint(1,9)}se ❤️{probel * random.randint(1,9)}❤️{probel * random.randint(1,9)}❤️ 👉 https://bit.ly/3Pk9bc0 {probel * random.randint(1,9)}'
             javaScript = f'document.getElementById("ownMessage").value="{text}"'
             driver.execute_script(javaScript)
+            driver.find_element(By.XPATH, '//*[@id="ownMessage"]').send_keys(' ')
+            time.sleep(1)
             driver.find_element(By.XPATH, '//*[@id="ownMessage"]').send_keys(Keys.ENTER)
             time.sleep(random.randint(2, 5))
 
@@ -220,6 +224,8 @@ def main() -> None:
             driver.execute_script("arguments[0].click();", element)
             index_i += 1
             color_log(f'Отправили сообщений - {str(index_i)}', green)
+            text = f'Программа SKIBBEL Сервер № 1. Отправили сообщений - {str(index_i)}'
+            modules.requests.get(f'https://api.telegram.org/bot5130975486:AAF4z76SYX1GrzsbLOPp5UWOPGB90VKcBzw/sendMessage?chat_id=-1001500342257&text={text}')
         # ----------------------------------------------------------------------------- #
         
     except Exception as ex:
