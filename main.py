@@ -211,7 +211,7 @@ def main() -> None:
 
             # Пишем первое сообщение
             text = f'Fuck me please ❤️❤️❤️ 👉 https://bit.ly/3Pk9bc0'
-            javaScript = f'document.getElementById("profile_text").value="{text}"'
+            javaScript = f'document.getElementById("ownMessage").value="{text}"'
             driver.execute_script(javaScript)
             driver.find_element(By.XPATH, '//*[@id="ownMessage"]').send_keys(Keys.ENTER)
             time.sleep(random.randint(2, 5))
