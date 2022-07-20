@@ -35,5 +35,5 @@ def get_good_proxy() -> List[str]:
     with Pool(150) as p:
         good_proxy_list = p.map(_get_proxy, all_proxy)
     good_proxy_list = [i1 for i in good_proxy_list for i1 in i if len(i1) != 0]
-    color_log(f'Найдено {len(good_proxy_list)} прокси\n', green)
+    color_log(f'Найдено {len(good_proxy_list)} прокси', green)
     return good_proxy_list
