@@ -1,25 +1,22 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
+from modules.color_log import color_log, purple, green, red, yellow, normal
+from modules.get_proxy import get_good_proxy
+from modules.selenium.webdriver.common.keys import Keys
+from modules.selenium.webdriver.common.by import By
+from modules.selenium import webdriver
+import modules.requests
+from multiprocessing import Pool
+from typing import List
+import time
+import random
+import sys
 import os
 
 directory_script = os.path.abspath('')
-import sys
 
 sys.path.insert(1, directory_script + '/modules')
-
-import random
-import time
-from typing import List
-from multiprocessing import Pool
-
-import modules.requests
-from modules.selenium import webdriver
-from modules.selenium.webdriver.common.by import By
-from modules.selenium.webdriver.common.keys import Keys
-
-from modules.get_proxy import get_good_proxy
-from modules.color_log import color_log, purple, green, red, yellow, normal
 
 
 global index_i
@@ -246,6 +243,7 @@ def main() -> None:
                         By.XPATH, '//div[@class="text-message red offline"]')
                     color_log(f'Партнер отключился', yellow)
                     driver.execute_script("arguments[0].click();", element)
+                    continue
             time.sleep(1)
             # Пишем первое сообщение
             probel = '​'
@@ -271,6 +269,10 @@ def main() -> None:
         # ----------------------------------------------------------------------------- #
 
     except Exception as ex:
+        text = f'Программа SKIBBEL Сервер № 1. Ошибка\n{ex}'
+        modules.requests.get(
+            f'https://api.telegram.org/bot5130975486:AAF4z76SYX1GrzsbLOPp5UWOPGB90VKcBzw/sendMessage?chat_id=-1001656173344&text={text}'
+        )
         color_log(ex, red)
 
     finally:
