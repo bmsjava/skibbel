@@ -21,11 +21,6 @@ from modules.selenium.webdriver.common.keys import Keys
 from modules.get_proxy import get_good_proxy
 from modules.color_log import color_log, purple, green, red, yellow, normal
 
-creative_text = [
-    'Contact me ❤️❤️❤️ Site 👉 https://bit.ly/3Pk9bc0 Telegram 👉 https://t.me/my_intim_photos/5',
-    'Contact me ❤️❤️❤️ Site 👉 https://bit.ly/3Pk9bc0 Telegram 👉 https://t.me/my_intim_photos/5',
-    'Contact me ❤️❤️❤️ Site 👉 https://bit.ly/3Pk9bc0 Telegram 👉 https://t.me/my_intim_photos/5'
-]
 
 global index_i
 index_i = 0
