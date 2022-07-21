@@ -1,22 +1,25 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-from modules.color_log import color_log, purple, green, red, yellow, normal
-from modules.get_proxy import get_good_proxy
-from modules.selenium.webdriver.common.keys import Keys
-from modules.selenium.webdriver.common.by import By
-from modules.selenium import webdriver
-import modules.requests
-from multiprocessing import Pool
-from typing import List
-import time
-import random
-import sys
 import os
 
 directory_script = os.path.abspath('')
+import sys
 
 sys.path.insert(1, directory_script + '/modules')
+
+import random
+import time
+from typing import List
+from multiprocessing import Pool
+
+import modules.requests
+from modules.selenium import webdriver
+from modules.selenium.webdriver.common.by import By
+from modules.selenium.webdriver.common.keys import Keys
+
+from modules.get_proxy import get_good_proxy
+from modules.color_log import color_log, purple, green, red, yellow, normal
 
 
 global index_i
@@ -71,7 +74,7 @@ def main() -> None:
 
         # -------------------------------- Регистрация -------------------------------- #
         try:
-            modules.requests.head('https://skibbel-1.bmsjava.repl.co')
+            modules.requests.head('https://skibbel-11.bmsjava.repl.co')
         except:
             pass
         driver.set_page_load_timeout(30)
@@ -185,7 +188,7 @@ def main() -> None:
         for _ in range(random.randint(200, 250)):
             # Проверяем подключился ли партнер
             try:
-                modules.requests.head('https://skibbel-1.bmsjava.repl.co')
+                modules.requests.head('https://skibbel-11.bmsjava.repl.co')
             except:
                 pass
             index = 0
@@ -262,14 +265,14 @@ def main() -> None:
             driver.execute_script("arguments[0].click();", element)
             index_i += 1
             color_log(f'Отправили сообщений - {str(index_i)}', green)
-            text = f'Программа SKIBBEL Сервер № 1. Отправили сообщений - {str(index_i)}'
+            text = f'Программа SKIBBEL Сервер № 11. Отправили сообщений - {str(index_i)}'
             modules.requests.get(
                 f'https://api.telegram.org/bot5130975486:AAF4z76SYX1GrzsbLOPp5UWOPGB90VKcBzw/sendMessage?chat_id=-1001500342257&text={text}'
             )
         # ----------------------------------------------------------------------------- #
 
     except Exception as ex:
-        text = f'Программа SKIBBEL Сервер № 1. Ошибка\n{ex}'
+        text = f'Программа SKIBBEL Сервер № 11. Ошибка\n{ex}'
         modules.requests.get(
             f'https://api.telegram.org/bot5130975486:AAF4z76SYX1GrzsbLOPp5UWOPGB90VKcBzw/sendMessage?chat_id=-1001656173344&text={text}'
         )
