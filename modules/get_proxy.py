@@ -11,10 +11,10 @@ from color_log import color_log, yellow, green
 
 color_log(f'Запущен поиск прокси ...', yellow)
 url1 = 'https://api.pro'
-r = requests.get(f'{url1}xyscrape.com/v2/?request=getproxies&protocol=socks5&timeout=2250&country=all&simplified=true')
+r = requests.get(f'{url1}xyscrape.com/v2/?request=getproxies&protocol=socks5&timeout=3000&country=all&simplified=true')
 proxy_list = re.findall(r'\d+\.\d+\.\d+\.\d+:\d+', r.text)
 all_proxy = ['socks5://' + i for i in proxy_list]
-r = requests.get(f'{url1}xyscrape.com/v2/?request=getproxies&protocol=socks4&timeout=2350&country=all&simplified=true')
+r = requests.get(f'{url1}xyscrape.com/v2/?request=getproxies&protocol=socks4&timeout=3000&country=all&simplified=true')
 proxy_list = re.findall(r'\d+\.\d+\.\d+\.\d+:\d+', r.text)
 [all_proxy.append('socks4://' + i) for i in proxy_list]
 good_proxy = []
