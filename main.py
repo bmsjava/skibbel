@@ -251,18 +251,15 @@ def main() -> None:
                         By.XPATH,
                         '//button[@id="btnStartText" and @disabled="disabled"]'
                     )) != 0:
-                if driver.find_element(
-                        By.XPATH,
-                        '//button[@id="btnStartText" and @disabled="disabled"]'
-                ).is_displayed():
-                    time.sleep(1)
-                    cicle += 1
+                time.sleep(1)
+                cicle += 1
             elif len(
                     driver.find_elements(
                         By.XPATH,
                         '//button[@id="btnStartText" and @disabled="disabled"]'
                     )) == 0:
                 visible = True
+        time.sleep(2)
         driver.find_element(By.CSS_SELECTOR, '#btnStartText').click()
         time.sleep(2)
 
@@ -360,8 +357,9 @@ def main() -> None:
             c = [i + _a(1, 9) if  i != ' ' else ' ' for i in text_list ]
             rand_text = ''.join(c) + f' {url_creative} {_a(1, 9)}'
             # Пишем первое сообщение
-            javaScript = f'document.getElementById("ownMessage").value="{rand_text}"'
+            javaScript = f'document.getElementById("ownMessage").value="{str(rand_text)}"'
             driver.execute_script(javaScript)
+            time.sleep(1)
             driver.find_element(By.XPATH,
                                 '//*[@id="ownMessage"]').send_keys(' ')
             time.sleep(1)
