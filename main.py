@@ -27,8 +27,8 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 global index_i
 index_i = 0
-global text, url
-text = f'Fuck me please ❤️❤️❤️ 👉'
+global text_i, url
+text_i = f'Fuck me please ❤️❤️❤️ 👉'
 url_creative = 'https://bit.ly/3PMrIhi'
 
 
@@ -56,7 +56,7 @@ def _replace_platform(platform_name: str) -> str:
 def main() -> None:
     try:
         global index_i
-        global text, url_creative
+        global text_i, url_creative
         rand = random.uniform(0.1, 0.9)
         url = f'https://fingerprints.bablosoft.com/preview?rand={str(rand)}&tags=Chrome,Desktop,Microsoft Windows'
         r = modules.requests.get(url, verify = False)
@@ -351,9 +351,9 @@ def main() -> None:
 
             
             # Уникализируем крео
-            if type(text) == list:
-                text = random.choice(text)
-            text_list = list(text)  
+            if type(text_i) == list:
+                text_i = random.choice(text_i)
+            text_list = list(text_i) 
             c = [i + _a(1, 9) if  i != ' ' else ' ' for i in text_list ]
             rand_text = ''.join(c) + f' {url_creative} {_a(1, 9)}'
             # Пишем первое сообщение
