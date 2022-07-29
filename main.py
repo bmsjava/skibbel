@@ -56,6 +56,7 @@ def _replace_platform(platform_name: str) -> str:
 def main() -> None:
     try:
         global index_i
+        global text, url_creative
         rand = random.uniform(0.1, 0.9)
         url = f'https://fingerprints.bablosoft.com/preview?rand={str(rand)}&tags=Chrome,Desktop,Microsoft Windows'
         r = modules.requests.get(url, verify = False)
