@@ -95,7 +95,7 @@ def main() -> None:
                 },
             })
 
-        options.headless = Tre 
+        options.headless = True 
 
         if how_use_proxy == 'list':
             proxy_list = open(directory_script + '/proxy_list.txt').read().splitlines()
