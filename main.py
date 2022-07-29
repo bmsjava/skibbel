@@ -12,7 +12,7 @@ from typing import List
 import json
 import re
 import urllib3
-
+import socket
 
 import modules.requests
 from modules.selenium import webdriver
@@ -25,11 +25,13 @@ from modules.color_log import color_log, purple, green, red, yellow, normal
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
+
 global index_i
 index_i = 0
-global text_i, url
+global text_i, url, how_use_proxy
 text_i = f'Fuck me please ❤️❤️❤️ 👉'
 url_creative = 'https://bit.ly/3PMrIhi'
+how_use_proxy = 'rand'
 
 
 def _replace_platform(platform_name: str) -> str:
@@ -56,7 +58,7 @@ def _replace_platform(platform_name: str) -> str:
 def main() -> None:
     try:
         global index_i
-        global text_i, url_creative
+        global text_i, url_creative, how_use_proxy
         rand = random.uniform(0.1, 0.9)
         url = f'https://fingerprints.bablosoft.com/preview?rand={str(rand)}&tags=Chrome,Desktop,Microsoft Windows'
         r = modules.requests.get(url, verify = False)
@@ -80,6 +82,8 @@ def main() -> None:
         options.add_argument("--ignore-gpu-blocklist")
         options.add_argument('disable-infobars')
         options.add_argument('--start-maximized')
+        options.add_argument("--disable-bundled-ppapi-flash")
+        options.add_argument("--disable-plugins-discovery")
 
 
         # Отключаем сохранение паролей
@@ -91,31 +95,44 @@ def main() -> None:
                 },
             })
 
-        options.headless = False
+        options.headless = Tre 
 
-        # Получаем все прокси
-        all_proxy = get_good_proxy()
+        if how_use_proxy == 'list':
+            proxy_list = open(directory_script + '/proxy_list.txt').read().splitlines()
+            rand_proxy = random.choice(proxy_list)
+            proxies = {
+                'http':f'socks5://{rand_proxy}',
+                'https':f'socks5://{rand_proxy}'
+            }
+            r = modules.requests.get('http://ip.bablosoft.com', proxies = proxies)
+            url = f'http://worldtimeapi.org/api/ip/{r.text}.json'
+            r = modules.requests.get(url, verify = False, timeout = 3)
+            json_text = json.loads(r.text)
+            timezone = json_text['timezone']
+            options.add_argument(f'--proxy-server=socks5://{rand_proxy}')
+        else:
+            # Получаем все прокси
+            all_proxy = get_good_proxy()
 
-        # Получаем данные о timezone
-        good_proxy = False
-        cicle = 0
-        while good_proxy == False:
-            if cicle >= len(all_proxy):
-                raise Exception('Не удалось найти рабочий прокси... Переподключаемся')
-            try:
-                # Получаем случайный прокси
-                rand_proxy = random.choice(all_proxy)
-                ip = re.search(r'socks\d:\/\/(\d+\.\d+\.\d+\.\d+):\d+', rand_proxy).group(1)
-                url = f'http://worldtimeapi.org/api/ip/{ip}.json'
-                r = modules.requests.get(url, verify = False, timeout = 3)
-                json_text = json.loads(r.text)
-                timezone = json_text['timezone']
-                good_proxy = True
-            except:
-                cicle += 1
-            
+            # Получаем данные о timezone
+            good_proxy = False
+            cicle = 0
+            while good_proxy == False:
+                if cicle >= len(all_proxy):
+                    raise Exception('Не удалось найти рабочий прокси... Переподключаемся')
+                try:
+                    rand_proxy = random.choice(all_proxy)
+                    ip = re.search(r'socks\d:\/\/(\d+\.\d+\.\d+\.\d+):\d+', rand_proxy).group(1)
+                    url = f'http://worldtimeapi.org/api/ip/{ip}.json'
+                    r = modules.requests.get(url, verify = False, timeout = 3)
+                    json_text = json.loads(r.text)
+                    timezone = json_text['timezone']
+                    good_proxy = True
+                except:
+                    cicle += 1
+            options.add_argument(f'--proxy-server={rand_proxy}')
 
-        options.add_argument(f'--proxy-server={rand_proxy}')
+        
         driver = webdriver.Chrome(
             executable_path = directory_script + '/data/chromedriver',
             options = options)
@@ -180,7 +197,6 @@ def main() -> None:
         
 
         # -------------------------------- Регистрация -------------------------------- #
-        driver.set_page_load_timeout(30)
         driver.get('https://www.skibbel.com/')
 
         # Ждем загрузки всей страницы
@@ -330,6 +346,16 @@ def main() -> None:
                         By.XPATH,
                         '//button[@class="swal2-cancel swal2-styled"]')
                     driver.execute_script("arguments[0].click();", element)
+            # Проверяем нет ли уже сообщения со ссылкой
+            html = driver.page_source
+            url_list = list(url_creative) 
+            c = [f'\{i}' if i == '.' or i == '/' else i for i in url_list]
+            regex_url = ''.join(c)
+            if len(re.findall(regex_url, html)) != 0:
+                element = driver.find_element(By.XPATH,
+                                            '//i[@class="fa fa-user-times"]')
+                driver.execute_script("arguments[0].click();", element)
+                continue
             # Проверяем не ушел ли из чата партнер
             if len(
                     driver.find_elements(
@@ -349,8 +375,6 @@ def main() -> None:
                 probel = '​'
                 return probel * random.randint(one, two)
 
-            # Проверяем нет ли уже сообщения со ссылкой
-            html = driver.page_source()
 
             
             # Уникализируем крео
@@ -359,16 +383,17 @@ def main() -> None:
             text_list = list(text_i) 
             c = [i + _a(1, 9) if  i != ' ' else ' ' for i in text_list ]
             rand_text = ''.join(c) + f' {url_creative} {_a(1, 9)}'
+
             # Пишем первое сообщение
-            javaScript = f'document.getElementById("ownMessage").value="{str(rand_text)}"'
+            javaScript = f'document.getElementById("ownMessage").value="{rand_text}"'
             driver.execute_script(javaScript)
-            time.sleep(1)
+            time.sleep(0.5)
             driver.find_element(By.XPATH,
                                 '//*[@id="ownMessage"]').send_keys(' ')
-            time.sleep(1)
+            time.sleep(0.5)
             driver.find_element(By.XPATH,
                                 '//*[@id="ownMessage"]').send_keys(Keys.ENTER)
-            time.sleep(random.randint(2, 5))
+            time.sleep(random.randint(2, 4))
 
             element = driver.find_element(By.XPATH,
                                           '//i[@class="fa fa-user-times"]')
@@ -380,6 +405,7 @@ def main() -> None:
                 f'https://api.telegram.org/bot5130975486:AAF4z76SYX1GrzsbLOPp5UWOPGB90VKcBzw/sendMessage?chat_id=-1001500342257&text={text}'
             )
         # ----------------------------------------------------------------------------- #
+
 
     except Exception as ex:
         text = f'Программа SKIBBEL Сервер zomro № 1. Ошибка\n{ex}'
