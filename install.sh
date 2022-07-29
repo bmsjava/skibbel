@@ -12,3 +12,6 @@ chmod +x data/chromedriver
 rm chromedriver_linux64.zip
 apt-get update
 apt-get install -y libgconf-2-4
+sudo apt-get install language-pack-ru
+sudo update-locale LANG=ru_RU.UTF-8
+sudo reboot
