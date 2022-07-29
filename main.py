@@ -89,6 +89,7 @@ def main() -> None:
                 'profile': {
                     'password_manager_enabled': False
                 },
+                'intl.accept_languages': 'en,en_US',
             })
 
         options.headless = False
