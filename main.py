@@ -89,10 +89,9 @@ def main() -> None:
                 'profile': {
                     'password_manager_enabled': False
                 },
-                'intl.accept_languages': 'en,en_US',
             })
 
-        options.headless = True
+        options.headless = False
 
         # Получаем все прокси
         all_proxy = get_good_proxy()
@@ -116,7 +115,7 @@ def main() -> None:
                 cicle += 1
             
 
-        #utc = json_text['utc_offset']
+        options.add_argument(f'--proxy-server={rand_proxy}')
         driver = webdriver.Chrome(
             executable_path = directory_script + '/data/chromedriver',
             options = options)
@@ -245,7 +244,7 @@ def main() -> None:
         cicle = 0
         visible = False
         while visible == False:
-            if cicle >= 30:
+            if cicle >= 15:
                 raise Exception('Не дождались появления кнопки НАЧАТЬ ЧАТ')
             if len(
                     driver.find_elements(
@@ -349,6 +348,9 @@ def main() -> None:
             def _a(one: int, two: int) -> str:
                 probel = '​'
                 return probel * random.randint(one, two)
+
+            # Проверяем нет ли уже сообщения со ссылкой
+            html = driver.page_source()
 
             
             # Уникализируем крео
