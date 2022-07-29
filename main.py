@@ -2,16 +2,17 @@
 # -*- coding: utf-8 -*-
 
 import os
-
 directory_script = os.path.abspath('')
 import sys
-
 sys.path.insert(1, directory_script + '/modules')
 
 import random
 import time
 from typing import List
-from multiprocessing import Pool
+import json
+import re
+import urllib3
+
 
 import modules.requests
 from modules.selenium import webdriver
@@ -22,13 +23,50 @@ from modules.get_proxy import get_good_proxy
 from modules.color_log import color_log, purple, green, red, yellow, normal
 
 
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
 global index_i
 index_i = 0
+global text, url
+text = f'Fuck me please ❤️❤️❤️ 👉'
+url_creative = 'https://bit.ly/3PMrIhi'
+
+
+def _replace_platform(platform_name: str) -> str:
+    platform_mathches = {
+        'Windows NT 10.0'    :  'Windows 10',
+        'Windows NT 6.3'     :  'Windows 8.1',
+        'Windows NT 6.2'     :  'Windows 8',
+        'Windows NT 6.1'     :  'Windows 7',
+        'Windows NT 6.0'     :  'Windows Vista',
+        'Windows NT 5.2'     :  'Windows Server 2003/XP x64',
+        'Windows NT 5.1'     :  'Windows XP',
+        'Windows xp'         :  'Windows XP',
+        'Windows NT 5.0'     :  'Windows 2000',
+        'Windows me'         :  'Windows ME',
+        'Win98'              :  'Windows 98',
+        'Win95'              :  'Windows 95',
+        'Win16'              :  'Windows 3.11',
+    }
+    if platform_name not in platform_mathches:
+        return 'Windows 10'
+    return platform_mathches[platform_name]
 
 
 def main() -> None:
     try:
         global index_i
+        rand = random.uniform(0.1, 0.9)
+        url = f'https://fingerprints.bablosoft.com/preview?rand={str(rand)}&tags=Chrome,Desktop,Microsoft Windows'
+        r = modules.requests.get(url, verify = False)
+        json_text = json.loads(r.text)
+        ua = json_text['ua']
+        platform = re.search(r'\((Win[^;]+);', ua).group(1)
+        width = json_text['availWidth']
+        height = json_text['availHeight']
+        webgl_vendor = json_text['vendor']
+        renderer = json_text['renderer']
+
         options = webdriver.ChromeOptions()
         options.add_argument("--mute-audio")
         options.add_argument('--no-sandbox')
@@ -40,43 +78,107 @@ def main() -> None:
         options.add_argument("--enable-webgl-draft-extensions")
         options.add_argument("--ignore-gpu-blocklist")
         options.add_argument('disable-infobars')
-        options.add_argument("--start-maximized")
+        options.add_argument('--start-maximized')
 
-        # Отключаем сохранение паролей, webrtc и устанавливаем англ язык
+
+        # Отключаем сохранение паролей
         options.add_experimental_option(
             'prefs', {
                 'credentials_enable_service': False,
                 'profile': {
                     'password_manager_enabled': False
                 },
-                'intl.accept_languages': 'en,en_US',
-                "webrtc.ip_handling_policy": "disable_non_proxied_udp",
-                "webrtc.multiple_routes_enabled": False,
-                "webrtc.nonproxied_udp_enabled": False
             })
 
-        options.headless = True
+        options.headless = False
 
-        rand_proxy = random.choice(get_good_proxy())
-        options.add_argument(f'--proxy-server={rand_proxy}')
+        # Получаем все прокси
+        all_proxy = get_good_proxy()
+
+        # Получаем данные о timezone
+        good_proxy = False
+        cicle = 0
+        while good_proxy == False:
+            if cicle >= len(all_proxy):
+                raise Exception('Не удалось найти рабочий прокси... Переподключаемся')
+            try:
+                # Получаем случайный прокси
+                rand_proxy = random.choice(all_proxy)
+                ip = re.search(r'socks\d:\/\/(\d+\.\d+\.\d+\.\d+):\d+', rand_proxy).group(1)
+                url = f'http://worldtimeapi.org/api/ip/{ip}.json'
+                r = modules.requests.get(url, verify = False, timeout = 3)
+                json_text = json.loads(r.text)
+                timezone = json_text['timezone']
+                good_proxy = True
+            except:
+                cicle += 1
+            
+
+        #utc = json_text['utc_offset']
         driver = webdriver.Chrome(
-            #executable_path = directory_script + '/data/chromedriver',
-            options=options)
-        driver.set_window_size(1920, 1080)
+            executable_path = directory_script + '/data/chromedriver',
+            options = options)
+
+
+        # Установка User Agent и платформы
+        override = {"userAgent": ua, "platform": platform}
+        driver.execute_cdp_cmd('Network.setUserAgentOverride', override)
+
         # Список блокируемых форматов изображений
         img_format_list = [
             '*.svg*', '*.png*', '*.jpg*', '*.jpeg*', '*.bmp*', '*.gif*',
             '*.tif*', '*.ico*', '*adpresenter.de*'
         ]
+        # Запрет загрузки изображений или сайтов
         driver.execute_cdp_cmd('Network.setBlockedURLs',
-                               {'urls': img_format_list})
+                                {'urls': img_format_list})
         driver.execute_cdp_cmd('Network.enable', {})
 
+        # Установка времени системы
+        driver.execute_cdp_cmd('Emulation.setTimezoneOverride',{'timezoneId': f'{timezone}'})
+
+        # Установка данных о браузере
+        screenOrientation = dict(angle=0, type='portraitPrimary')
+        driver.execute_cdp_cmd('Emulation.setDeviceMetricsOverride', {
+            'mobile': False,
+            'width': width,
+            'height': height,
+            'deviceScaleFactor': 1,
+            'screenOrientation': screenOrientation,
+            'vendor':'Google Inc.',
+            'platform':platform,
+            'webgl_vendor':webgl_vendor,
+            'renderer':renderer,
+            'fix_hairline':True,
+            'languages':["en-US", "en"]
+        })
+        # Отключаем отслеживание webrtc
+        driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
+            "source": """
+                const newProto = navigator.__proto__
+                delete newProto.webdriver
+                navigator.__proto__ = newProto
+                """
+            })
+
+        # Исправляем hearlines modernizr
+        driver.execute_cdp_cmd('Page.addScriptToEvaluateOnNewDocument', {
+            'source': '''
+                const elementDescriptor = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetHeight');
+                Object.defineProperty(HTMLDivElement.prototype, 'offsetHeight', {
+                ...elementDescriptor,
+                get: function() {
+                    if (this.id === 'modernizr') {
+                        return 1;
+                    }
+                    return elementDescriptor.get.apply(this);
+                    },
+                });   
+                '''
+            })
+        
+
         # -------------------------------- Регистрация -------------------------------- #
-        try:
-            modules.requests.head('https://skibbel-11.bmsjava.repl.co')
-        except:
-            pass
         driver.set_page_load_timeout(30)
         driver.get('https://www.skibbel.com/')
 
@@ -187,10 +289,6 @@ def main() -> None:
         # --------------------------------- Рассылка ---------------------------------- #
         for _ in range(random.randint(200, 250)):
             # Проверяем подключился ли партнер
-            try:
-                modules.requests.head('https://skibbel-11.bmsjava.repl.co')
-            except:
-                pass
             index = 0
             visible = True
             while visible == True:
@@ -248,10 +346,20 @@ def main() -> None:
                     driver.execute_script("arguments[0].click();", element)
                     continue
             time.sleep(1)
+
+            def _a(one: int, two: int) -> str:
+                probel = '​'
+                return probel * random.randint(one, two)
+
+            
+            # Уникализируем крео
+            if type(text) == list:
+                text = random.choice(text)
+            text_list = list(text)  
+            c = [i + _a(1, 9) if  i != ' ' else ' ' for i in text_list ]
+            rand_text = ''.join(c) + f' {url_creative} {_a(1, 9)}'
             # Пишем первое сообщение
-            probel = '​'
-            text = f'F{probel * random.randint(1,9)}uc{probel * random.randint(1,9)}k m{probel * random.randint(1,9)}e pl{probel * random.randint(1,9)}ea{probel * random.randint(1,9)}se ❤️{probel * random.randint(1,9)}❤️{probel * random.randint(1,9)}❤️ 👉 https://bit.ly/3Pk9bc0 {probel * random.randint(1,9)}'
-            javaScript = f'document.getElementById("ownMessage").value="{text}"'
+            javaScript = f'document.getElementById("ownMessage").value="{rand_text}"'
             driver.execute_script(javaScript)
             driver.find_element(By.XPATH,
                                 '//*[@id="ownMessage"]').send_keys(' ')
@@ -265,14 +373,14 @@ def main() -> None:
             driver.execute_script("arguments[0].click();", element)
             index_i += 1
             color_log(f'Отправили сообщений - {str(index_i)}', green)
-            text = f'Программа SKIBBEL Сервер № 11. Отправили сообщений - {str(index_i)}'
+            text = f'Программа SKIBBEL Сервер zomro № 1. Отправили сообщений - {str(index_i)}'
             modules.requests.get(
                 f'https://api.telegram.org/bot5130975486:AAF4z76SYX1GrzsbLOPp5UWOPGB90VKcBzw/sendMessage?chat_id=-1001500342257&text={text}'
             )
         # ----------------------------------------------------------------------------- #
 
     except Exception as ex:
-        text = f'Программа SKIBBEL Сервер № 11. Ошибка\n{ex}'
+        text = f'Программа SKIBBEL Сервер zomro № 1. Ошибка\n{ex}'
         modules.requests.get(
             f'https://api.telegram.org/bot5130975486:AAF4z76SYX1GrzsbLOPp5UWOPGB90VKcBzw/sendMessage?chat_id=-1001656173344&text={text}'
         )
