@@ -92,7 +92,7 @@ def main() -> None:
                 'intl.accept_languages': 'en,en_US',
             })
 
-        options.headless = False
+        options.headless = True
 
         # Получаем все прокси
         all_proxy = get_good_proxy()
