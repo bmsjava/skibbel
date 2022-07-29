@@ -16,6 +16,6 @@ normal = '\033[0m'
 # ------------------- Цветной лог с датой и временем ------------------- #
 def color_log(text: str, color: str) -> str:
     d = datetime.now()
-    color_text = f'{color}[%Y-%m-%d %H:%M:%S] - {str(text} {normal}'
+    color_text = f'{color}[%Y-%m-%d %H:%M:%S] - {str(text)} {normal}'
     return print(d.strftime(color_text))
 # ---------------------------------------------------------------------- #
