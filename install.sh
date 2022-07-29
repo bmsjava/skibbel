@@ -8,6 +8,7 @@ version=$(grep -oPm1 "ChromeDriver "$chrome_version"\.[[:digit:]]+\.[[:digit:]]+
 wget -N https://chromedriver.storage.googleapis.com/$chrome_version/chromedriver_linux64.zip
 unzip chromedriver_linux64.zip
 chmod +x chromedriver
+mkdir "data"
 cp /usr/local/share/chromedriver "data/chromedriver"
 ln -s /usr/local/share/chromedriver /usr/local/bin/chromedriver
 ln -s /usr/local/share/chromedriver /usr/bin/chromedriver
