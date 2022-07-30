@@ -14,7 +14,7 @@ color_log(f'Запущен поиск прокси ...', yellow)
 r = requests.get(f'https://api.proxyscrape.com/v2/?request=displayproxies&protocol=socks5&timeout=2000&country=all&ssl=all&anonymity=elite,anonymous')
 proxy_list = re.findall(r'\d+\.\d+\.\d+\.\d+:\d+', r.text)
 all_proxy = ['socks5://' + i for i in proxy_list]
-r = requests.get(f'https://api.proxyscrape.com/v2/?request=displayproxies&protocol=socks5&timeout=2000&country=all&ssl=all&anonymity=elite,anonymous')
+r = requests.get(f'https://api.proxyscrape.com/v2/?request=displayproxies&protocol=socks4&timeout=2000&country=all&ssl=all&anonymity=elite,anonymous')
 proxy_list = re.findall(r'\d+\.\d+\.\d+\.\d+:\d+', r.text)
 [all_proxy.append('socks4://' + i) for i in proxy_list]
 good_proxy = []
