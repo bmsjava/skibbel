@@ -95,7 +95,7 @@ def main() -> None:
                 },
             })
 
-        options.headless = True 
+        options.headless = True
 
         if how_use_proxy == 'list':
             proxy_list = open(directory_script + '/proxy_list.txt').read().splitlines()
@@ -197,6 +197,7 @@ def main() -> None:
         
 
         # -------------------------------- Регистрация -------------------------------- #
+        driver.set_page_load_timeout(30)
         driver.get('https://www.skibbel.com/')
 
         # Ждем загрузки всей страницы
@@ -224,7 +225,11 @@ def main() -> None:
         time.sleep(1)
 
         # Выбираем свой пол
+        cicle = 0
         while len(driver.find_elements(By.CSS_SELECTOR, '#gender_text')) == 0:
+            if cicle >= 15:
+                raise Exception('Не дождались появления своего пола')
+                cicle += 1
             time.sleep(1)
         driver.find_element(By.XPATH,
                             '(//div[@class="select-wrapper"])[1]').click()
@@ -234,7 +239,11 @@ def main() -> None:
         time.sleep(0.5)
 
         # Выбираем свой возраст
+        cicle = 0
         while len(driver.find_elements(By.CSS_SELECTOR, '#my_age_text')) == 0:
+            if cicle >= 15:
+                raise Exception('Не дождались появления своего возраста')
+                cicle += 1
             time.sleep(1)
         driver.find_element(By.XPATH,
                             '(//div[@class="select-wrapper"])[2]').click()
@@ -246,8 +255,12 @@ def main() -> None:
         time.sleep(0.5)
 
         # Выбираем пол собеседника
+        cicle = 0
         while len(driver.find_elements(By.CSS_SELECTOR,
                                        '#s_gender_text')) == 0:
+            if cicle >= 15:
+                raise Exception('Не дождались появления пола собеседника')
+                cicle += 1
             time.sleep(1)
         driver.find_element(By.XPATH,
                             '(//div[@class="select-wrapper"])[3]').click()
