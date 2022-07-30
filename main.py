@@ -82,7 +82,6 @@ def main() -> None:
         options.add_argument("--ignore-gpu-blocklist")
         options.add_argument('disable-infobars')
         options.add_argument('--start-maximized')
-        options.add_argument('--disable-gpu')
         options.add_argument("--disable-bundled-ppapi-flash")
         options.add_argument("--disable-plugins-discovery")
 
@@ -312,6 +311,17 @@ def main() -> None:
                                {'urls': img_format_list})
         driver.execute_cdp_cmd('Network.enable', {})
         color_log(f'Прошли регистрацию', green)
+        r = modules.requests.get(f'https://api.whoapi.com/?domain={ip}&r=blacklist&apikey=demokey')
+        try:
+            json_text = json.loads(r.text)
+            status = json_text['status']
+            text = f'IP {ip} статус в блэклистах - {status}'
+            modules.requests.get(
+                f'https://api.telegram.org/bot5130975486:AAF4z76SYX1GrzsbLOPp5UWOPGB90VKcBzw/sendMessage?chat_id=-1001500342257&text={text}')
+        except:
+            modules.requests.get(
+                f'https://api.telegram.org/bot5130975486:AAF4z76SYX1GrzsbLOPp5UWOPGB90VKcBzw/sendMessage?chat_id=-1001656173344&text={r.text}')
+            color_log(f'Не удалось узнать наличие IP в blacklists', yellow)
         # ----------------------------------------------------------------------------- #
 
         # --------------------------------- Рассылка ---------------------------------- #
@@ -426,6 +436,17 @@ def main() -> None:
         modules.requests.get(
             f'https://api.telegram.org/bot5130975486:AAF4z76SYX1GrzsbLOPp5UWOPGB90VKcBzw/sendMessage?chat_id=-1001656173344&text={text}'
         )
+        r = modules.requests.get(f'https://api.whoapi.com/?domain={ip}&r=blacklist&apikey=demokey')
+        try:
+            json_text = json.loads(r.text)
+            status = json_text['status']
+            text = f'IP {ip} статус в блэклистах - {status}'
+            modules.requests.get(
+                f'https://api.telegram.org/bot5130975486:AAF4z76SYX1GrzsbLOPp5UWOPGB90VKcBzw/sendMessage?chat_id=-1001656173344&text={text}')
+        except:
+            modules.requests.get(
+                f'https://api.telegram.org/bot5130975486:AAF4z76SYX1GrzsbLOPp5UWOPGB90VKcBzw/sendMessage?chat_id=-1001656173344&text={r.text}')
+            color_log(f'Не удалось узнать наличие IP в blacklists', yellow)
         color_log(ex, red)
 
     finally:
