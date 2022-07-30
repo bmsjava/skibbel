@@ -82,6 +82,7 @@ def main() -> None:
         options.add_argument("--ignore-gpu-blocklist")
         options.add_argument('disable-infobars')
         options.add_argument('--start-maximized')
+        options.add_argument('--disable-gpu')
         options.add_argument("--disable-bundled-ppapi-flash")
         options.add_argument("--disable-plugins-discovery")
 
